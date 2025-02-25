@@ -1,14 +1,23 @@
-import { createStore } from 'vuex'
+// store/index.js
+import { createStore } from 'vuex';
 
 export default createStore({
   state: {
-  },
-  getters: {
+    repo: null
   },
   mutations: {
+    setRepo(state, repo) {
+      state.repo = repo;
+    }
   },
   actions: {
+    setRepo({ commit }, repo) {
+      commit('setRepo', repo);
+    }
   },
-  modules: {
+  getters: {
+    getRepo(state) {
+      return state.repo;
+    }
   }
-})
+});
