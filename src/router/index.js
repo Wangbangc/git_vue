@@ -8,10 +8,15 @@ import RepositoriesView from '../views/RepositoriesView.vue'
 import CreateRepositoryView from '../views/CreateRepositoryView.vue'
 import RepositoryDetail from '../views/RepositoryDetailView.vue'
 import CommitView from '../views/CommitView.vue'
-
+import Deepseek from '@/views/deepseek.vue'
 const routes = [
 
-  
+  {
+    path: '/deepseek',
+    name: 'deepseek',
+    component: Deepseek
+
+  },
   {
     path: '/register',
     name: 'register',

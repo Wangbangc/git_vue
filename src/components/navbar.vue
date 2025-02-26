@@ -4,7 +4,7 @@
         <button class="menu-button">
           <el-icon><Menu /></el-icon>
         </button>
-        <a href="#" class="logo">
+        <a  href='#/deepseek' class="logo">
           <el-icon><Promotion /></el-icon>
         </a>
         <span class="owner-repo">

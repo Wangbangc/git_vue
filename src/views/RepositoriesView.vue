@@ -12,7 +12,7 @@
 
         <p class="username">您的用户名</p>
 
-        <button class="edit-profile-button">编辑个人资料</button>
+        <button class="edit-profile-button" @click="goProfile" >编辑个人资料</button>
 
         <div class="stats">
 
@@ -122,23 +122,37 @@
 
   </div>
 
-  <el-dialog v-model="dialogVisible" title="创建新仓库" :append-to-body="true">
-    <el-form :model="newRepo">
-      <el-form-item label="用户名">
-        <el-input v-model="newRepo.username"></el-input>
+  <el-dialog v-model="dialogVisible" title="创建新仓库" width="60%" :append-to-body="true">
+    <el-form :model="newRepo" label-width="120px">
+      <el-form-item label="Owner *">
+        <el-select v-model="newRepo.username" placeholder="选择Owner" style="width: 100%;">
+          <el-option label="Wangbangc" value="Wangbangc"></el-option> <!-- 这里可以根据实际情况动态渲染选项 -->
+        </el-select>
       </el-form-item>
-      <el-form-item label="仓库名">
+      <el-form-item label="仓库名 *">
         <el-input v-model="newRepo.repositoryName"></el-input>
       </el-form-item>
-      <el-form-item label="描述">
-        <el-input v-model="newRepo.description"></el-input>
+      <el-form-item label="描述 (可选)">
+        <el-input type="textarea" v-model="newRepo.description"></el-input>
       </el-form-item>
+
+      <el-form-item label="可见性">
+        <el-radio-group v-model="newRepo.visibility">
+          <el-radio label="public">公开</el-radio>
+          <el-radio label="private">私有</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item>
+        <el-checkbox v-model="newRepo.addReadme">使用 README 文件初始化此仓库</el-checkbox>
+      </el-form-item>
+
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-      <el-button @click="dialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="confirmCreateRepository">确认创建</el-button>
-    </div>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="confirmCreateRepository" style="background-color: #28a745; border-color: #28a745;">创建仓库</el-button>
+      </div>
     </template>
   </el-dialog>
 
@@ -210,6 +224,9 @@ export default {
   },
 
   methods: {
+    goProfile(){
+      this.$router.push('/profile');
+    },
     ...mapActions(['setRepo']),
     async fetchRepositories() {
 
