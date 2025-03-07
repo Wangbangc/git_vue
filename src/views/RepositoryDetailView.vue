@@ -125,6 +125,7 @@ export default {
 </script>
 <style scoped>
 .repository-detail-container {
+  height: 100vh;
   font-family: sans-serif;
   padding: 20px;
 }
@@ -167,6 +168,7 @@ export default {
 .content {
   display: flex;
   gap: 20px;
+  height: 100vh;
 }
 
 /* 文件列表样式 */
