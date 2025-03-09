@@ -8,9 +8,8 @@
         <span class="repository-visibility">公开</span>
       </div>
       <div class="header-right">
-        <el-button type="primary">观察仓库</el-button>
-        <el-button type="primary">Fork仓库</el-button>
         <el-button type="primary">标星仓库</el-button>
+        <el-button type="primary">提交代码</el-button>
         <el-button type="primary" @click="cloneRepository">克隆仓库</el-button>
         <el-button type="primary" @click="deleteRepository">删除仓库</el-button>
       </div>
@@ -25,17 +24,12 @@
           <span>最后提交信息</span>
           <span>更新时间</span>
         </div>
-        <div class="file-item" v-for="file in files" :key="file.name">
-          <span class="file-name">{{ file.name }}</span>
-          <span class="commit-message">{{ file.commit_message }}</span>
-          <span class="updated-time">{{ file.updated_at }}</span>
+        <div class="file-item" v-for="file in repository.files" :key="file">
+          <span class="file-name">{{ file }}</span>
+          <span class="commit-message">Initial commit</span>
+          <span class="updated-time">2 days ago</span>
         </div>
-        <div class="file-item" @click="commitCode()">
-           <el-button type="primary" @click="commitCode">提交代码</el-button>
-        </div>
-        <div class="file-item"  @click="pullCode">
-           <el-button type="primary" @click="pullCode">拉取代码</el-button>
-        </div>
+        
       </div>
 
       <!-- 仓库信息 -->
@@ -52,45 +46,29 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { useRoute } from 'vue-router';
+import { getRepositoryDetails } from '../api/repository';
 
 export default {
   setup() {
     const route = useRoute();
-    const router = useRouter();
-    const store = useStore();
-    const repositoryId = ref(route.params.repositoryId); // 保留 ID
-
-    // 从 Vuex 中获取 repository 对象
-    const repository = ref(store.getters.getRepo || {});
-
-    const files = ref([]);
+    const repository = ref({});
 
     onMounted(async () => {
-      // 确保能正确获取到 repository
-      console.log("repository data from Vuex:", repository.value);
-
-      // 获取文件列表 (本地文件可视化)
-      if (repository.value.path) {
-          await fetchFiles(repository.value.path);
-      } else {
-          console.warn("Repository path is undefined.  Cannot fetch files.");
+     
+      const repositoryId = route.params.repositoryId
+      console.log("repositoryId:", repositoryId);
+      try {
+        const response = await getRepositoryDetails(repositoryId);
+        if (response.data.code === 200) {
+          repository.value = response.data.data;
+        } else {
+          console.error('Failed to fetch repository details:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching repository details:', error);
       }
     });
-
-    const fetchFiles = async (path) => {
-      // 使用path获取文件列表的逻辑
-      console.log('Fetching files from path:', path);
-      try {
-        const response = await axios.get(`/api/files?path=${encodeURIComponent(path)}`); // 替换为你的 API 端点
-        files.value = response.data; // 假设 API 返回文件列表
-      } catch (error) {
-        console.error('Error fetching files:', error);
-        // 处理错误，例如显示错误消息
-      }
-    };
 
     const cloneRepository = () => {
       // 克隆仓库逻辑
@@ -114,14 +92,13 @@ export default {
 
     return {
       repository,
-      files,
       cloneRepository,
       deleteRepository,
       commitCode,
       pullCode
     };
   }
-}
+};
 </script>
 <style scoped>
 .repository-detail-container {

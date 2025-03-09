@@ -8,7 +8,7 @@
           <el-icon><Promotion /></el-icon>
         </a>
         <span class="owner-repo">
-          <a href="#">用户名</a> / <a href="#">仓库名</a>
+          <a href="#/profile">用户名</a> / <a href="#/repositories">仓库名</a>
         </span>
       </div>
   

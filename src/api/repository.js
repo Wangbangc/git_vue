@@ -45,6 +45,6 @@ export const listRepositories = () => {
   return apiClient.get('/repositories/list');
 };
 
-export const getRepositoryDetails = (repoId) => {
-  return apiClient.get(`/repositories/${repoId}`);
+export const getRepositoryDetails = (repositoryId) => {
+  return apiClient.get(`/repositories/${repositoryId}`);
 }; 
