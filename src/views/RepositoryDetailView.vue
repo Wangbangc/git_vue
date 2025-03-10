@@ -46,17 +46,18 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { getRepositoryDetails } from '../api/repository';
+import { useRoute, useRouter } from 'vue-router';
+import { getRepositoryDetails, cloneRepository as cloneRepoAPI, deleteRepository as deleteRepoAPI } from '../api/repository';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const repository = ref({});
 
     onMounted(async () => {
-     
-      const repositoryId = route.params.repositoryId
+      const repositoryId = route.params.repositoryId;
       console.log("repositoryId:", repositoryId);
       try {
         const response = await getRepositoryDetails(repositoryId);
@@ -70,14 +71,65 @@ export default {
       }
     });
 
-    const cloneRepository = () => {
-      // 克隆仓库逻辑
-      console.log('克隆仓库');
+    const cloneRepository = async () => {
+      try {
+        const response = await cloneRepoAPI(route.params.repositoryId);
+        if (response.data.code === 200) {
+          ElMessage({
+            message: '仓库克隆成功！',
+            type: 'success',
+          });
+          console.log('Repository cloned successfully:', response.data.data);
+        } else {
+          ElMessage({
+            message: `克隆失败: ${response.data.message}`,
+            type: 'error',
+          });
+          console.error('Failed to clone repository:', response.data.message);
+        }
+      } catch (error) {
+        ElMessage({
+          message: '克隆过程中发生错误',
+          type: 'error',
+        });
+        console.error('Error cloning repository:', error);
+      }
     };
 
-    const deleteRepository = () => {
-      // 删除仓库逻辑
-      console.log('删除仓库');
+    const deleteRepository = async () => {
+      try {
+        await ElMessageBox.confirm(
+          '此操作将永久删除该仓库, 是否继续?',
+          '警告',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+        );
+        const response = await deleteRepoAPI(route.params.repositoryId);
+        if (response.data.code === 200) {
+          ElMessage({
+            message: '仓库删除成功！',
+            type: 'success',
+          });
+          router.push('/repositories'); // 假设仓库列表页面的路径是 '/repositories'
+        } else {
+          ElMessage({
+            message: `删除失败: ${response.data.message}`,
+            type: 'error',
+          });
+          console.error('Failed to delete repository:', response.data.message);
+        }
+      } catch (error) {
+        if (error !== 'cancel') {
+          ElMessage({
+            message: '删除过程中发生错误',
+            type: 'error',
+          });
+          console.error('Error deleting repository:', error);
+        }
+      }
     };
 
     const commitCode = () => {

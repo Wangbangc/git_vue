@@ -1,4 +1,5 @@
 import apiClient from './index';
+import axios from 'axios';
 
 export const initializeRepository = (repoData) => {
   const params = new URLSearchParams();
@@ -18,15 +19,15 @@ export const createRepository = (repoData) => {
   return apiClient.post('/repositories/create', params);
 };
 
-export const deleteRepository = (repoId) => {
-  const params = new URLSearchParams();
-  params.append('repositoryId', repoId);
-  return apiClient.delete('/repositories/delete', { data: params });
+export const deleteRepository = (repositoryId) => {
+  return apiClient.delete('/repositories/delete', {
+    params: { repositoryId }
+  });
 };
 
-export const cloneRepository = (repoId) => {
+export const cloneRepository = (repositoryId) => {
   const params = new URLSearchParams();
-  params.append('repositoryId', repoId);
+  params.append('repositoryId', repositoryId);
   return apiClient.post('/repositories/clone', params);
 };
 

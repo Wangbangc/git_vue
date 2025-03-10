@@ -166,149 +166,89 @@
 import { mapActions } from 'vuex';
 import { listRepositories, createRepository } from '../api/repository';
 
-
-
 export default {
-
   data() {
-
     return {
-
       repositories: [],
-
       filteredRepositories: [],
-
       dialogVisible: false,
-
       newRepo: {
-        userId:1,
-
+        userId: 1,
         username: '',
-
         repositoryName: '',
-
         description: ''
-
       },
-
       currentPage: 1,
-
       pageSize: 10,
-
       totalRepositories: 0,
-
       searchQuery: ''
-
     }
-
   },
 
   watch: {
-
     searchQuery(newQuery) {
-
       this.filteredRepositories = this.repositories.filter(repo =>
-
         repo.name.toLowerCase().includes(newQuery.toLowerCase())
-
       );
-
     }
-
   },
 
   created() {
-
     this.fetchRepositories();
-
   },
 
   methods: {
-    goProfile(){
+    goProfile() {
       this.$router.push('/profile');
     },
     ...mapActions(['setRepo']),
     async fetchRepositories() {
-
       try {
-
         const response = await listRepositories();
         if (response.data.code === 200) {
-
           this.repositories = response.data.data;
-          
           this.filteredRepositories = this.repositories;
-
           this.totalRepositories = response.data.data.length; // 假设返回的数据包含总数
-
         } else {
-
           console.error('Failed to fetch repositories:', response.data.message);
-
         }
-
       } catch (error) {
-
         console.error('Error fetching repositories:', error);
-
       }
-
     },
 
     async createRepository(repoData) {
-
       try {
-
         const response = await createRepository(repoData);
-
-        if (response.data.code === 0) {
-
+        if (response.data.code === 200) {
           console.log('Repository created successfully:', response.data.data);
-
           this.fetchRepositories(); // 重新获取仓库列表
-
+          this.filteredRepositories = this.repositories.filter(repo =>
+        repo.name.toLowerCase().includes(newQuery.toLowerCase()))
         } else {
-
           console.error('Failed to create repository:', response.data.message);
-
         }
-
       } catch (error) {
-
         console.error('Error creating repository:', error);
-
       }
-
     },
 
     confirmCreateRepository() {
-
       this.createRepository(this.newRepo);
-
       this.dialogVisible = false;
-
     },
 
     handlePageChange(page) {
-
       this.currentPage = page;
-
       this.fetchRepositories(); // 根据新页码刷新列表
-
     },
 
     viewRepository(id) {
-
       // 查看仓库详情
-
       console.log('查看仓库', id);
-
     }
-
   }
-
 }
-
 </script>
 
 
